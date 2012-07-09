@@ -16,8 +16,8 @@
 
 (defun maven-forest (forest)
   (set (make-local-variable 'maven-tree)
-       (tree-mode-insert
-	(maven-tree-widgets forest))))
+       (mapcar 'tree-mode-insert
+	       (maven-tree-widgets forest))))
 
 (defun maven-tree-widgets (forest)
   (mapcar 'maven-tree-widget forest))
