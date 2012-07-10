@@ -36,21 +36,3 @@
     :open nil
     :child-elements ,(car (cdr tree))))
 
-;; (defun maven-project-widgets (projects)
-;;   (mapcar (lambda (p)
-;; 	    (maven-tree-widget p 'maven-source-widgets))
-;; 	  projects))
-
-;; (defun maven-source-widgets (widg)
-;;   (mapcar (lambda (s)
-;; 	    (maven-tree-widget s 'maven-package-widgets))
-;; 	  (maven-sources (:tag (:node widg)))))
-
-;; (defun maven-package-widgets (widg)
-;;   nil)
-
-;; (defun maven-projects ()
-;;   (list "PRoject 1" "PRoject 2"))
-
-;; (defun maven-sources (project)
-;;   (list "main/java" "test/java"))
