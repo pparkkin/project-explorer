@@ -41,19 +41,29 @@
 	      (list
 	       (car (last (split-string prj "/")))
 	       prj
-	       (packages prj))))
+	       (sources prj))))
 	  (poms directory)))
 
-(defun packages (project)
+(defun sources (project)
   (mapcar
    (lambda (sr)
      (list
       (mapconcat (lambda (s) s) (last (split-string sr "/") 2) "/")
-      sr))
+      sr
+      (packages sr)))
    (apply
     'append
     (mapcar 'list-directories
 	    (list-directories (concat project "/src"))))))
+
+(defun packages (srcs)
+  (mapcar (lambda (src)
+	    (list
+	     (replace-regexp-in-string
+	      "/" "."
+	      (substring src (+ (length srcs) 1)))
+	     src))
+	  (list-directories srcs :recursive)))
 
 (defun poms (directory)
   "List the pom files in DIRECTORY and in its sub-directories."
@@ -87,14 +97,18 @@
 	    current-directory-list
 	    :initial-value ())))
 
-(defun list-directories (dir)
+(defun list-directories (dir &optional recursive)
   (let ((current-directory-list
 	 (directory-files-and-attributes dir t)))
     (reduce (lambda (fles fle)
 	      (if (eq t (car (cdr fle)))
 		  (if (equal "." (substring (car fle) -1))
 		      fles
-		    (cons (car fle) fles))
+		    (if recursive
+			(append (cons (car fle)
+				      (list-directories (car fle) :recursive))
+				fles)
+		      (cons (car fle) fles)))
 		fles))
 	    current-directory-list
 	    :initial-value ())))
