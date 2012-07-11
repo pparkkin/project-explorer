@@ -62,8 +62,16 @@
 	     (replace-regexp-in-string
 	      "/" "."
 	      (substring src (+ (length srcs) 1)))
-	     src))
+	     src
+	     (files src)))
 	  (list-directories srcs :recursive)))
+
+(defun files (src)
+  (mapcar (lambda (f)
+	    (list
+	     (car (last (split-string f "/")))
+	     f))
+	  (list-files src)))
 
 (defun poms (directory)
   "List the pom files in DIRECTORY and in its sub-directories."
@@ -114,6 +122,7 @@
 	    :initial-value ())))
   
 (defun list-files (dir)
+;  (print dir) ; debug
   (let ((current-directory-list
 	 (directory-files-and-attributes dir t)))
     (reduce (lambda (fles fle)
