@@ -28,7 +28,7 @@
   `(tree-widget
     :node (push-button
 	   :tag ,(car tree)
-	   :format "%[%t%]\n"
+	   :format "%t\n"
 	   :notify tree-mode-reflesh-parent)
     :expander ,(lambda (w)
 		 (maven-tree-widgets (widget-get w :child-elements)))
