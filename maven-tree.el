@@ -13,7 +13,7 @@
 
   (maven-forest
    (mapcar (lambda (prj)
-	     (append prj (packages prj)))
+	     (append prj (list (packages prj))))
 	   (projects "~/devel/MrMutator"))))
 
 (defun maven-forest (forest)
