@@ -25,15 +25,26 @@
 (defun maven-tree-widget (tree)
 ;  (print tree) ; debug
 ;  (debug)
-  `(tree-widget
-    :node (push-button
-	   :tag ,(car tree)
-	   :format "%t\n"
-	   :notify tree-mode-reflesh-parent)
-    :expander ,(lambda (w)
-		 (maven-tree-widgets (widget-get w :child-elements)))
-    :open nil
-    :child-elements ,(car (cdr (cdr tree)))))
+  (let ((tag      (nth 0 tree))
+	(path     (nth 1 tree))
+	(children (nth 2 tree)))
+    (cond ((file-directory-p path)
+	   `(tree-widget
+	     :node (push-button
+		    :tag ,tag
+		    :format "%[%t%]\n"
+		    :notify tree-mode-reflesh-parent)
+	     :expander ,(lambda (w)
+			  (maven-tree-widgets (widget-get w :child-elements)))
+	     :open nil
+	     :child-elements ,children))
+	  ((file-regular-p path)
+	   `(push-button
+	     :tag ,tag
+	     :path ,path
+	     :format "%t\n"
+	     :notify ,(lambda (widget &rest ignore)
+			(print (widget-get widget :path))))))))
 
 (defun projects (directory)
   (mapcar (lambda (pom)
