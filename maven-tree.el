@@ -11,10 +11,7 @@
   (setq mode-name "Maven tree mode")
   (setq major-mode 'maven-tree-mode)
 
-  (maven-forest
-   (mapcar (lambda (prj)
-	     (append prj (list (packages prj))))
-	   (projects "~/devel/MrMutator"))))
+  (maven-forest (projects "~/devel/MrMutator")))
 
 (defun maven-forest (forest)
   (set (make-local-variable 'maven-tree)
@@ -38,6 +35,15 @@
     :open nil
     :child-elements ,(car (cdr (cdr tree)))))
 
+(defun projects (directory)
+  (mapcar (lambda (pom)
+	    (let ((prj (substring pom 0 -8)))
+	      (list
+	       (car (last (split-string prj "/")))
+	       prj
+	       (packages prj))))
+	  (poms directory)))
+
 (defun packages (project)
   (mapcar
    (lambda (sr)
@@ -47,14 +53,7 @@
    (apply
     'append
     (mapcar 'list-directories
-	    (list-directories (concat (car (cdr project)) "/src"))))))
-
-(defun projects (directory)
-  (mapcar (lambda (pom)
-	    (list
-	     (car (last (split-string pom "/") 2))
-	     (substring pom 0 -8)))
-	  (poms directory)))
+	    (list-directories (concat project "/src"))))))
 
 (defun poms (directory)
   "List the pom files in DIRECTORY and in its sub-directories."
