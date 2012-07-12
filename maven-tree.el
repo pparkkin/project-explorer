@@ -9,9 +9,18 @@
   "A mode to display a tree view of source packages in a Maven project"
   (kill-all-local-variables)
   (setq mode-name "Maven tree mode")
-  (setq major-mode 'maven-tree-mode)
+  (setq major-mode 'maven-tree-mode))
 
-  (maven-forest (projects "~/devel/MrMutator")))
+(defun maven-tree (project-dir)
+  (interactive "DProject directory: ")
+  (let ((view-win (selected-window))
+	(view-buf (window-buffer))
+	(tree-win (split-window-horizontally)))
+    (set-window-buffer tree-win (get-buffer-create "*project explorer*"))
+    (select-window tree-win)
+    (maven-forest (projects project-dir))
+    (select-window view-win)
+    (set-window-buffer view-win view-buf)))
 
 (defun maven-forest (forest)
   (set (make-local-variable 'maven-tree)
