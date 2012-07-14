@@ -5,6 +5,10 @@
 
 (require 'tree-mode)
 
+(defconst *project-explorer-buffer*
+  (get-buffer-create "*project-explorer*"))
+(defvar *editor-window* nil)
+
 (define-derived-mode maven-tree-mode tree-mode "Maven tree"
   "A mode to display a tree view of source packages in a Maven project"
   (kill-all-local-variables)
@@ -13,14 +17,14 @@
 
 (defun maven-tree (project-dir)
   (interactive "DProject directory: ")
-  (let ((view-win (selected-window))
-	(view-buf (window-buffer))
+  (let ((view-buf (window-buffer))
 	(tree-win (split-window-horizontally)))
-    (set-window-buffer tree-win (get-buffer-create "*project explorer*"))
+    (setq *editor-window* (selected-window))
+    (set-window-buffer tree-win *project-explorer-buffer*)
     (select-window tree-win)
     (maven-forest (projects project-dir))
-    (select-window view-win)
-    (set-window-buffer view-win view-buf)))
+    (select-window *editor-window*)
+    (set-window-buffer *editor-window* view-buf)))
 
 (defun maven-forest (forest)
   (set (make-local-variable 'maven-tree)
@@ -53,7 +57,9 @@
 	     :path ,path
 	     :format "%t\n"
 	     :notify ,(lambda (widget &rest ignore)
-			(print (widget-get widget :path))))))))
+			(let ((path (widget-get widget :path)))
+			  (set-window-buffer *editor-window*
+					     (find-file-noselect path)))))))))
 
 (defun projects (directory)
   (mapcar (lambda (pom)
