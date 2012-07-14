@@ -18,7 +18,9 @@
 (defun maven-tree (project-dir)
   (interactive "DProject directory: ")
   (let ((view-buf (window-buffer))
-	(tree-win (split-window-horizontally)))
+	(tree-win
+	 (split-window-horizontally
+	  (truncate (* (window-width) 0.75)))))
     (setq *editor-window* (selected-window))
     (set-window-buffer tree-win *project-explorer-buffer*)
     (select-window tree-win)
